@@ -1,38 +1,43 @@
 import { useEffect, useRef, useState } from 'react';
-import socketIOClient from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
 const SOCKET_SERVER_URL = 'http://localhost:3333';
 
 const useChat = (roomId: string) => {
-  const [messages, setMessages] = useState<any>([]); // Sent and received messages
+  const [messages, setMessages] = useState<
+    { body: string; senderId: string }[]
+  >([]); // Sent and received messages
   const socketRef = useRef<any>();
 
   useEffect(() => {
     // Creates a WebSocket connection
-    socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
+    socketRef.current = io(SOCKET_SERVER_URL, {
       query: { roomId },
     });
 
-    // Listens for incoming messages
-    socketRef.current.on('NEW_CHAT_MESSAGE_EVENT', (message: any) => {
-      const incomingMessage = {
-        ...message,
-        ownedByCurrentUser: message.senderId === socketRef.current.id,
-      };
-      setMessages((messages: any) => [...messages, incomingMessage]);
+    socketRef.current.on('connect', () => {
+      console.log('[CONNECTION]');
     });
 
-    // Destroys the socket reference
-    // when the connection is closed
+    socketRef.current.on(
+      'NEW_CHAT_MESSAGE_EVENT',
+      (message: { senderId: string }) => {
+        const incomingMessage = {
+          ...message,
+          ownedByCurrentUser: message.senderId === socketRef.current.id,
+        };
+        setMessages((messages: any) => [...messages, incomingMessage]);
+      }
+    );
+
     return () => {
-      socketRef.current.disconnect();
+      socketRef.current.off('connect');
+      socketRef.current.off('disconnect');
+      socketRef.current.off('NEW_CHAT_MESSAGE_EVENT');
     };
   }, [roomId]);
 
-  // Sends a message to the server that
-  // forwards it to all users in the same room
-  const sendMessage = (messageBody: any) => {
-    console.log(messageBody);
+  const sendMessage = (messageBody: string) => {
     socketRef.current.emit('NEW_CHAT_MESSAGE_EVENT', {
       body: messageBody,
       senderId: socketRef.current.id,

@@ -4,22 +4,14 @@ import { Link } from 'react-router-dom';
 const Home = () => {
   const [roomName, setRoomName] = React.useState('');
 
-  const handleRoomNameChange = (event: any) => {
+  const handleRoomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRoomName(event.target.value);
   };
 
   return (
-    <div className="home-container">
-      <input
-        type="text"
-        placeholder="Room"
-        value={roomName}
-        onChange={handleRoomNameChange}
-        className="text-input-field"
-      />
-      <Link to={`/${roomName}`} className="enter-room-button">
-        Join room
-      </Link>
+    <div>
+      <input type="text" value={roomName} onChange={handleRoomNameChange} />
+      <Link to={`/${roomName}`}>Join room</Link>
     </div>
   );
 };

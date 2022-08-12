@@ -2,12 +2,14 @@ import React from 'react';
 import useChat from '../hooks/useChat';
 import { useParams } from 'react-router-dom';
 
-const ChatRoom = (props: any) => {
-  const { roomId } = useParams(); // Gets roomId from URL
-  const { messages, sendMessage } = useChat(roomId as string); // Creates a websocket and manages messaging
-  const [newMessage, setNewMessage] = React.useState(''); // Message to be sent
+const ChatRoom = () => {
+  const { roomId } = useParams();
+  const { messages, sendMessage } = useChat(roomId as string);
+  const [newMessage, setNewMessage] = React.useState('');
 
-  const handleNewMessageChange = (event: any) => {
+  const handleNewMessageChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setNewMessage(event.target.value);
   };
 
@@ -17,31 +19,19 @@ const ChatRoom = (props: any) => {
   };
 
   return (
-    <div className="chat-room-container">
-      <h1 className="room-name">Room: {roomId}</h1>
-      <div className="messages-container">
-        <ol className="messages-list">
-          {messages.map((message: any, i: any) => (
-            <li
-              key={i}
-              className={`message-item ${
-                message.ownedByCurrentUser ? 'my-message' : 'received-message'
-              }`}
-            >
-              {message.body}
+    <div>
+      <h1>Room: {roomId}</h1>
+      <ol>
+        {messages.map(
+          (message: { body: string; senderId: string }, i: number) => (
+            <li key={i}>
+              {message.senderId}: {message.body}
             </li>
-          ))}
-        </ol>
-      </div>
-      <textarea
-        value={newMessage}
-        onChange={handleNewMessageChange}
-        placeholder="Write message..."
-        className="new-message-input-field"
-      />
-      <button onClick={handleSendMessage} className="send-message-button">
-        Send
-      </button>
+          )
+        )}
+      </ol>
+      <textarea value={newMessage} onChange={handleNewMessageChange} />
+      <button onClick={handleSendMessage}>Send</button>
     </div>
   );
 };
