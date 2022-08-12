@@ -1,23 +1,33 @@
-import * as express from 'express';
-import { Message } from '@project/api-interfaces';
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 
-// Express server
-const app = express();
 const port = process.env.port || 3333;
-const server = app.listen(port, () => {
-  console.log('Listening at http://localhost:' + port + '/api');
-});
-server.on('error', console.error);
 
 // io Server
-const httpServer = createServer(app);
+const httpServer = createServer();
 const io = new Server(httpServer, {
-  /* options */
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
 });
 
 io.on('connection', (socket) => {
-  // ...
+  // Join a room
+  const { roomId } = socket.handshake.query;
+  socket.join(roomId);
+
+  // Listen for new messages
+  socket.on('NEW_CHAT_MESSAGE_EVENT', (data) => {
+    io.in(roomId).emit('NEW_CHAT_MESSAGE_EVENT', data);
+  });
+
+  // Leave the room if the user closes the socket
+  socket.on('disconnect', () => {
+    socket.leave(roomId);
+  });
 });
-httpServer.listen(3000);
+
+httpServer.listen(port, () => {
+  console.log('Listening at http://localhost:' + port);
+});

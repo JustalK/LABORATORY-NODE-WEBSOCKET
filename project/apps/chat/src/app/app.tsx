@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Message } from '@project/api-interfaces';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './Home/Home';
+import ChatRoom from './ChatRoom/ChatRoom';
 
-export const App = () => {
-  const [m, setMessage] = useState<Message>({ message: '' });
-
-  useEffect(() => {
-    fetch('/api')
-      .then((r) => r.json())
-      .then(setMessage);
-  }, []);
-
+function App() {
   return (
-    <>
-      <div style={{ textAlign: 'center' }}>
-        <h1>Welcome to chat!</h1>
-        <img
-          width="450"
-          src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png"
-          alt="Nx - Smart, Fast and Extensible Build System"
-        />
-      </div>
-      <div>{m.message}</div>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/:roomId" element={<ChatRoom />} />
+      </Routes>
+    </Router>
   );
-};
+}
 
 export default App;
