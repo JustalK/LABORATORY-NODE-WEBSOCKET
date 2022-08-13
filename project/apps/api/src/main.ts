@@ -13,18 +13,21 @@ const io = new Server(httpServer, {
 });
 
 io.on('connection', (socket) => {
-  // Join a room
-  const { roomId } = socket.handshake.query;
-  socket.join(roomId);
+  // Once the client is connected, he can join a room
+  socket.on('join', function (roomId) {
+    socket.join(roomId);
+  });
 
   // Listen for new messages
   socket.on('NEW_CHAT_MESSAGE_EVENT', (data) => {
+    const [, roomId] = socket.rooms;
+    //socket.rooms.has("room1");
     io.in(roomId).emit('NEW_CHAT_MESSAGE_EVENT', data);
   });
 
   // Leave the room if the user closes the socket
   socket.on('disconnect', () => {
-    socket.leave(roomId);
+    //socket.leave(roomId);
   });
 });
 
