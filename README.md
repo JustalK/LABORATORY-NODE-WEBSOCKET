@@ -1,4 +1,4 @@
-# LABORATORY-NODE-WEBSOCKET
+# LABORATORY-REACT-SOCKET
 
 ![Alt text](./Documentation/graph.jpg?raw=true "Documentation")
 
