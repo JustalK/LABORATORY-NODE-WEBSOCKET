@@ -30,8 +30,12 @@ const ChatRoom = () => {
           )
         )}
       </ol>
-      <textarea value={newMessage} onChange={handleNewMessageChange} />
-      <button onClick={handleSendMessage}>Send</button>
+      <div>
+        <textarea value={newMessage} onChange={handleNewMessageChange} />
+      </div>
+      <div>
+        <button onClick={handleSendMessage}>Send</button>
+      </div>
     </div>
   );
 };

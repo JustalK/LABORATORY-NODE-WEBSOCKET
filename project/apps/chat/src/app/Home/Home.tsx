@@ -10,8 +10,12 @@ const Home = () => {
 
   return (
     <div>
-      <input type="text" value={roomName} onChange={handleRoomNameChange} />
-      <Link to={`/${roomName}`}>Join room</Link>
+      <div>
+        <input type="text" value={roomName} onChange={handleRoomNameChange} />
+      </div>
+      <div>
+        <Link to={`/${roomName}`}>Join room</Link>
+      </div>
     </div>
   );
 };
