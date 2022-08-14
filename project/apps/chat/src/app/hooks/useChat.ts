@@ -1,24 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-
-const SOCKET_SERVER_URL = 'http://localhost:3333';
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+import { Message } from '@project/messages';
 
 // Creates a WebSocket connection
-const server = io(SOCKET_SERVER_URL);
+const server = io(
+  `http://${process.env['NX_SOCKET_SERVER_HOST']}:${process.env['NX_SOCKET_SERVER_PORT']}`
+);
 
 const useChat = (roomId: string) => {
-  const [messages, setMessages] = useState<
-    { body: string; senderId: string }[]
-  >([]); // Sent and received messages
-  const socketRef = useRef<any>();
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     server.on('connect', () => {
-      console.log('[CONNECTION]');
       server.emit('join', roomId);
     });
 
-    server.on('NEW_CHAT_MESSAGE_EVENT', (message: { senderId: string }) => {
+    server.on('NEW_CHAT_MESSAGE_EVENT', (message: Message) => {
       const incomingMessage = {
         ...message,
         ownedByCurrentUser: message.senderId === server.id,
@@ -27,9 +24,9 @@ const useChat = (roomId: string) => {
     });
 
     return () => {
-      //socketRef.current.off('connect');
-      //socketRef.current.off('disconnect');
-      //socketRef.current.off('NEW_CHAT_MESSAGE_EVENT');
+      server.off('connect');
+      server.off('disconnect');
+      server.off('NEW_CHAT_MESSAGE_EVENT');
     };
   }, [roomId]);
 

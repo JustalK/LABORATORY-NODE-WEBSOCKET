@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@project/api-interfaces": ["libs/api-interfaces/src/index.ts"]
+      "@project/api-interfaces": ["libs/api-interfaces/src/index.ts"],
+      "@project/messages": ["libs/messages/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

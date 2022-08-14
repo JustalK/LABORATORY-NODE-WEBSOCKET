@@ -20,6 +20,7 @@ io.on('connection', (socket) => {
 
   // Listen for new messages
   socket.on('NEW_CHAT_MESSAGE_EVENT', (data) => {
+    console.log('event');
     const [, roomId] = socket.rooms;
     //socket.rooms.has("room1");
     io.in(roomId).emit('NEW_CHAT_MESSAGE_EVENT', data);
